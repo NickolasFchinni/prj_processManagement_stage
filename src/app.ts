@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
+import routes from './routes'; // Importa o index.ts
 
 dotenv.config();
 
@@ -11,9 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Process Mapping API with Prisma');
-});
+app.use(routes); // Usa todas as rotas
 
 const PORT = process.env.PORT || 5000;
 
