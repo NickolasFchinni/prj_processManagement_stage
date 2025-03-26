@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Area {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String     @unique
+  description String?
+  processes   Process[]
+  createdAt   DateTime   @default(now())
+}
+
+model Process {
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  description   String?
+  area          Area       @relation(fields: [areaId], references: [id])
+  areaId        String     @db.ObjectId
+  parentProcess Process?   @relation("ProcessHierarchy", fields: [parentProcessId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentProcessId String?   @db.ObjectId
+  subprocesses  Process[]  @relation("ProcessHierarchy")
+  isSystem      Boolean    @default(false)
+  status        String     @default("active")
+  priority      String     @default("medium")
+  tools         String[]
+  responsible   Responsible[]
+  documentation Documentation[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+type Responsible {
+  name  String
+  email String
+  role  String
+}
+
+type Documentation {
+  title String
+  url   String
+  type  String
+}
