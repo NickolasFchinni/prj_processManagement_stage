@@ -4,15 +4,14 @@ import {
   createArea,
   deleteArea,
   getAreaById,
+  updateArea,
   getAreaProcesses
 } from '../controllers/AreaController';
 
 const router = express.Router();
 
-// GET /api/areas
 router.get('/', getAllAreas);
 
-// POST /api/areas
 router.post('/', createArea);
 
 router.delete('/:id', (req, res) => {
@@ -32,5 +31,7 @@ router.get('/:id/areaProcesses', (req, res) => {
     if (result) res.send(result);
   }).catch(err => res.status(500).send(err));
 });
+
+router.put('/:id', updateArea)
 
 export default router;

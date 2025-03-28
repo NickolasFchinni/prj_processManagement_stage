@@ -26,7 +26,6 @@ export const createArea = async (req: Request, res: Response) => {
   }
 };
 
-// Buscar uma área por ID
 export const getAreaById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -45,7 +44,6 @@ export const getAreaById = async (req: Request, res: Response) => {
   }
 };
 
-// Atualizar uma área
 export const updateArea = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, description } = req.body;
@@ -66,7 +64,6 @@ export const deleteArea = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    // Verifica se a área possui processos vinculados
     const processes = await prisma.process.findMany({
       where: { areaId: id }
     });
@@ -75,7 +72,6 @@ export const deleteArea = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Não é possível excluir uma área com processos cadastrados' });
     }
 
-    // Se não houver processos, procede com a exclusão
     await prisma.area.delete({
       where: { id: id}
     });
@@ -86,14 +82,13 @@ export const deleteArea = async (req: Request, res: Response) => {
   }
 };
 
-// Obter os processos associados a uma área
 export const getAreaProcesses = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
     const area = await prisma.area.findUnique({
       where: { id: id },
-      include: { processes: true } // Assumindo que há um relacionamento com "processes"
+      include: { processes: true }
     });
 
     if (!area) {

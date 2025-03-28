@@ -8,10 +8,8 @@ router.get('/', (req, res) => {
   res.send('Mapeamento de processos');
 });
 
-// Rotas de áreas
 router.use('/api/areas', areaRoutes);
 
-// Rotas de processos
 router.use('/api/processes', processRoutes);
 
 export default router;

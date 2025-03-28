@@ -27,21 +27,9 @@ model Process {
   isSystem      Boolean    @default(false)
   status        String     @default("active")
   priority      String     @default("medium")
-  tools         String[]
-  responsible   Responsible[]
-  documentation Documentation[]
+  tools         String
+  responsible   String
+  documentation String
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
-}
-
-type Responsible {
-  name  String
-  email String
-  role  String
-}
-
-type Documentation {
-  title String
-  url   String
-  type  String
 }

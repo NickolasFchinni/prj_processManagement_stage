@@ -4,7 +4,6 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// Definição de um tipo para representar um processo com subprocessos
 interface ProcessTree {
   id: string;
   name: string;
@@ -34,7 +33,6 @@ export const createProcess = async (req: Request, res: Response) => {
     description,
     areaId,
     parentProcessId,
-    isSystem,
     status,
     priority,
     tools,
@@ -49,7 +47,6 @@ export const createProcess = async (req: Request, res: Response) => {
         description,
         area: { connect: { id: areaId } },
         parentProcess: parentProcessId ? { connect: { id: parentProcessId } } : undefined,
-        isSystem,
         status,
         priority,
         tools,
@@ -103,7 +100,6 @@ export const getProcessTree = async (req: Request, res: Response): Promise<Respo
   }
 };
 
-// Obter processo por ID
 export const getProcessById = async (req: Request, res: Response): Promise<Response> => {
   const { id } = req.params;
 
@@ -128,7 +124,6 @@ export const getProcessById = async (req: Request, res: Response): Promise<Respo
   }
 };
 
-// Obter subprocessos diretos
 export const getSubprocesses = async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -148,12 +143,10 @@ export const getSubprocesses = async (req: Request, res: Response) => {
   }
 };
 
-// Deletar processo
 export const deleteProcess = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    // Verifica se o processo existe
     const process = await prisma.process.findUnique({ 
       where: { id },
       include: { subprocesses: true }
@@ -163,9 +156,7 @@ export const deleteProcess = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Processo não encontrado' });
     }
 
-    // Impede exclusão se houver subprocessos
     if (process.subprocesses && process.subprocesses.length > 0) {
-      // Mapeando subprocessos corretamente
       return res.status(400).json({ 
         error: 'Não é possível excluir processo com subprocessos',
         subprocesses: process.subprocesses.map((subprocess: any) => subprocess.id) 
@@ -180,19 +171,16 @@ export const deleteProcess = async (req: Request, res: Response) => {
   }
 };
 
-// Atualizar processo
 export const updateProcess = async (req: Request, res: Response) => {
   const { id } = req.params;
   const updateData = req.body;
 
   try {
-    // Verifica se o processo existe
     const existingProcess = await prisma.process.findUnique({ where: { id } });
     if (!existingProcess) {
       return res.status(404).json({ error: 'Processo não encontrado' });
     }
 
-    // Atualiza o processo
     const updatedProcess = await prisma.process.update({
       where: { id },
       data: {
@@ -204,7 +192,6 @@ export const updateProcess = async (req: Request, res: Response) => {
         tools: updateData.tools,
         responsible: updateData.responsible,
         documentation: updateData.documentation,
-        // Atualiza relações se fornecidas
         area: updateData.areaId ? { connect: { id: updateData.areaId } } : undefined,
         parentProcess: updateData.parentProcessId 
           ? { connect: { id: updateData.parentProcessId } } 
@@ -227,5 +214,3 @@ export const updateProcess = async (req: Request, res: Response) => {
     });
   }
 };
-
-// Implementar outros métodos (getProcessById, updateProcess, deleteProcess, getSubprocesses)
